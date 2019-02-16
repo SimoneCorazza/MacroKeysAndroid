@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Macro keys</string>
+    <string name="activity_connection_selection_label">Server selection</string>
+    <string name="title_activity_macro">Macro viewer</string>
+    <string name="title_activity_test">Test</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+</resources>
