@@ -4,4 +4,11 @@ language: android
 before_install:
  - chmod +x gradlew
 
-install: gradle wrapper --gradle-version 4.10 --distribution-type=all
+android:
+ components:
+ - tools
+ - platform-tools
+ - build-tools-27.0.3
+ - android-27
+
+install: gradle wrapper --gradle-version 4.10
