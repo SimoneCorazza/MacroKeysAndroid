@@ -2,7 +2,6 @@ package com.macrokeysclient;
 
 
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

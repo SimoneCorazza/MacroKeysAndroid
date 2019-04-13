@@ -19,7 +19,6 @@ import com.macrokeys.MacroScreen;
 import com.macrokeys.MacroSetup;
 import com.macrokeys.comunication.MacroClient;
 import com.macrokeys.rendering.PaintStyle;
-import com.macrokeys.rendering.Renderer;
 import com.macrokeys.rendering.TextAllign;
 import com.macrokeys.screen.Screen;
 
