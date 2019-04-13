@@ -4,4 +4,4 @@ language: android
 before_install:
  - chmod +x gradlew
 
-install: gradle wrapper --gradle-version 4.2
+install: gradle wrapper --gradle-version 4.10.1
