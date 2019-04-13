@@ -5,7 +5,7 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:padding="4dp"
-                android:descendantFocusability="blocksDescendants" >     <!--Per far sì che la listView parent abbia il focus -->
+                android:descendantFocusability="blocksDescendants" >     <!-- Make the parent listView have the focus -->
 
     <TextView
         android:id="@+id/txtServerName"

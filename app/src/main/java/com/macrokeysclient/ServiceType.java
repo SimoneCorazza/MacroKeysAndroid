@@ -2,7 +2,7 @@ package com.macrokeysclient;
 
 
 /**
- * Tipologia di servizio di connessione al server
+ * Connection type to a server
  */
 public enum ServiceType {
     Wifi,

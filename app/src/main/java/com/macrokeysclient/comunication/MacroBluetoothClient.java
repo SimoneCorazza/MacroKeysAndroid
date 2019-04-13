@@ -12,15 +12,14 @@ import java.util.UUID;
 
 
 /**
- * Implementazione di {@link MacroClient} per la comunicazione tramite
- * Bluetooth
+ * Implementation of {@link MacroClient} for the comunication with Bluetooth
  */
 public final class MacroBluetoothClient extends MacroClient {
     
-    /** UUID usato per identificare l'applicazione lato server */
+    /** UUID used to identify the application in the server side */
     private static final UUID SERVICE_UUID = UUID.fromString("a69cea44-c6dd-11e7-abc4-cec278b6b50a");
     
-    /** Server al quale ci si sta connettendo */
+    /** Server this is comunicating with */
     private final BluetoothDevice server;
     
     

@@ -11,10 +11,10 @@ import java.io.IOException;
 
 
 /**
- * Implementazione di {@link MessageProtocol} per una comunicazione bluetooth.
+ * Implementastion of {@link MessageProtocol} for the Bluetooth comunication
  * <p>
- *     Il timeout non è stato implementato siccome il livello sottostante
- *     rileva atomaticamente la perdita di connessione
+ *     The timeout of the connection is not implementes because the underlaying
+ *     layer handle the lost of connection
  * </p>
  */
 public final class BluetoothMessageProtocol implements MessageProtocol {
@@ -39,22 +39,22 @@ public final class BluetoothMessageProtocol implements MessageProtocol {
     
     @Override
     public void setInputKeepAlive(int time) {
-        // Implementazione non necessaria
+        // Not needed
     }
     
     @Override
     public int getInputKeepAlive() {
-        return 0; // Implementazione non necessaria
+        return 0; // Not needed
     }
     
     @Override
     public void setOutputKeepAlive(int time) {
-        // Implementazione non necessaria
+        // Not needed
     }
     
     @Override
     public int getOutputKeepAlive() {
-        return 0; // Implementazione non necessaria
+        return 0; // Not needed
     }
     
     @Override

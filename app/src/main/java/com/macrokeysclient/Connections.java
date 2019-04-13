@@ -3,7 +3,7 @@ package com.macrokeysclient;
 import com.macrokeys.comunication.MacroClient;
 
 /**
- * Classe statica che memorizza le connessioni del device
+ * Static class to store the active connections
  */
 public final class Connections {
 
@@ -13,15 +13,15 @@ public final class Connections {
 
 
     /**
-     * @return Connessione attiva attualmente sul PC
+     * @return Active connection of this device; null if none
      */
     public static synchronized MacroClient getConnection() {
         return connection;
     }
 
     /**
-     * Setta la connessione col PC
-     * @param c - Connessione può essere null (connessione non stabilita)
+     * Set the active connection of this device
+     * @param c New active connection; null if none
      */
     public static synchronized void setConnection(MacroClient c) {
         connection = c;

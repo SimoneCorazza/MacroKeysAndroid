@@ -18,14 +18,14 @@ import android.widget.TextView;
 import com.macrokeysclient.R;
 
 /**
- * View per la visualizzazione e selezione di un server
+ * View to show and select servers
  */
 public class ServerSelectionView extends LinearLayout {
 
-    /** View per la lista degli items */
+    /** View for the list of items */
     private ListView itemListView;
     
-    /** Label per indicare che la lista è vuota */
+    /** Label to indicate the list is empty */
     private TextView txtNoItems;
     
     private LinearLayout disabledConnection;
@@ -72,14 +72,14 @@ public class ServerSelectionView extends LinearLayout {
 
 
     /**
-     * @param itemClickListener Evento generato al click di un item
+     * @param itemClickListener Event generated at the click of on item
      */
     public void setServerClickListener(AdapterView.OnItemClickListener itemClickListener) {
         itemListView.setOnItemClickListener(itemClickListener);
     }
 
     /**
-     * @return Evento generato al click di un item rappresentante un server
+     * @return Event generated at the click of on item
      */
     public AdapterView.OnItemClickListener getOnServerClickListener() {
         return itemListView.getOnItemClickListener();
@@ -87,8 +87,8 @@ public class ServerSelectionView extends LinearLayout {
     
     
     /**
-     * Aggiunge una view non selezionabile all'elenco di servers
-     * @param v View da aggiungere; non null
+     * Adds a header not selectable by the user
+     * @param v View to add
      */
     public void addHeaderView(@NonNull View v) {
         itemListView.addHeaderView(v, null, false);
@@ -96,7 +96,7 @@ public class ServerSelectionView extends LinearLayout {
     
     
     /**
-     * Se nessun server è stato trovato.
+     * If no server was found
      */
     public void setResultNoResults() {
         txtNoItems.setVisibility(View.VISIBLE);
@@ -106,10 +106,9 @@ public class ServerSelectionView extends LinearLayout {
     }
     
     /**
-     * Mostra i server risultanti.
-     * Se l'adaprter è vuoto questa chiamata è equivalente a
-     * {@link #setResultNoResults()}.
-     * @param adapter Adapter contenente i server
+     * Show the resulting servers
+     * If the adapter is empty this calls equal to a {@link #setResultNoResults()} call
+     * @param adapter Adapter containing the servers
      * @see #setResultNoResults()
      */
     public void setResults(@NonNull BaseAdapter adapter) {
@@ -126,20 +125,17 @@ public class ServerSelectionView extends LinearLayout {
     
     
     /**
-     * Imposta il risultato segnalando un errore nella configurazione nel
-     * dispositivo.
+     * Show an error in the configuration of the device
      * <p>
-     *     Vengono mostrati:
-     *     <li>Un bottone, che può anche non essere mostrato</li>
-     *     <li>Un icona</li>
-     *     <li>Ua TextView con un messaggio d'errore</li>
+     *     Is shown:
+     *     <li>A button that can be hidden</li>
+     *     <li>An icon</li>
+     *     <li>A TextView with a text message</li>
      * </p>
-     * @param resIcon Id della risorsa dell'icona dell'errore
-     * @param errorText Stringa di errore
-     * @param buttonCaption Testo del bottone; se null o stringa vuota il
-     *                      bottone non viene mostrato
-     * @param l Evento associato alla pressione del bottone; se null il
-     *          bottone non viene mostrato
+     * @param resIcon Id of the icon to show
+     * @param errorText Text of the error
+     * @param buttonCaption Text of the button; the button is hidden if is null or empty
+     * @param l Callback associated at the pressure of the button; if null the button is not shown
      */
     public void setResultNoConnection(int resIcon,
                                       String errorText,
@@ -165,7 +161,7 @@ public class ServerSelectionView extends LinearLayout {
     
     
     /**
-     * Mostra la progress bar
+     * Show the progress bar
      */
     public void showProgressBar() {
         itemListView.setVisibility(View.INVISIBLE);

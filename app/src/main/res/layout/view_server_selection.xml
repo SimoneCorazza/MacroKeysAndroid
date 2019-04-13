@@ -27,7 +27,7 @@
         android:paddingTop="16dp"
         android:layout_centerHorizontal="true"/>
 
-    <!-- Porzione del layout per quando la connessione non è abilita (es. wifi disabilitata) -->
+    <!-- Layout when the connection is not enabled -->
     <LinearLayout
         android:id="@+id/disabledConnection"
         android:orientation="vertical"
@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <!-- Icona della situazione -->
+        <!-- Icon -->
         <ImageView
             android:id="@+id/disabledConnection_icon"
             android:layout_gravity="center_horizontal"
@@ -44,7 +44,7 @@
 
             />
 
-        <!-- Messaggio di errore -->
+        <!-- Error message -->
         <TextView
             android:id="@+id/disabledConnection_error"
             android:layout_marginTop="5dp"
@@ -54,7 +54,7 @@
             android:text="Text"
             />
 
-        <!-- Azione sistemativa -->
+        <!-- Action that can help recover the error -->
         <Button
             android:theme="@style/Buttons"
             android:id="@+id/disabledConnection_btn"

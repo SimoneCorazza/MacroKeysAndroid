@@ -16,7 +16,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 /**
- * Adapter per gli items della liasta dei server
+ * Adapter for the items of the server list for the Wifi
  */
 public class NetServersAdapter extends BaseAdapter {
 

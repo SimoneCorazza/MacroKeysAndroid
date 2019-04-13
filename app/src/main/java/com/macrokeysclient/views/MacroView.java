@@ -30,23 +30,23 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * View per renderizzare le macro e gestirne l'input
+ * View to render the macro and handle the input
  */
 public class MacroView extends View {
 
-    /** Tempo in millisecondi necessari per considerare il touch come pressura del tasto */
+    /** Time in milliseconds to consider the touch as a key press */
     private static final long TIME_KEY_STROKE = 40;
 
-    /** Macro setup da renderizzare al momento */
+    /** MacroSetup to render */
     private MacroSetup setup;
 
-    /** Client dal quale inviare la pressione dei tasti */
+    /** Client witch send the keypress */
     private MacroClient macroClient;
 
-    /** Area disegnabile della view */
+    /** Are where the drowing take place */
     private com.macrokeys.rendering.RectF drawArea;
 
-    /** Informazioni sullo schermo per un dispositivo android */
+    /** Android info for the screen of this device */
     private AndroidScreen androidScreen;
 
     private Printer renderer;
@@ -91,35 +91,44 @@ public class MacroView extends View {
 
 
 
-    /** Minima distanza che deve essere percorsa (in ...?) per riconoscere
-     * l'azione del touch come un gesto (es. swipe) */
+    /** Minimum distance to recognize a swipe */
     private final static float MINIMUM_DISTANCE_GESTURE = 150;
 
-    /** Posizione del primo tocco (X) della gesture attuale in pixel */
+    /** Location of the first touch (X) of the swipe in pixels */
     private float firstX;
-    /** Posizione del primo tocco (Y) della gesture attuale in pixel */
+    
+    /** Location of the first touch (Y) of the swipe in pixels */
     private float firstY;
-    /** Istante di tempo in ms del primo tocco  */
+    
+    /** Timestamp in ms of the first touch  */
     private long tKeyStroke = 0;
-    /** Indica se è stato eseguito almeno un keystroke durante la gesture corrente; se viene settato
-     * a false viene interrotta la sequenza di keystroke impedene altri */
+    
+    /**
+     * Indicates if was executed at least one keystroke during the current swipe;
+     * if is set to false the keystroke sequence is interrupted
+     */
     private boolean keyStrokeMode = false;
-    /** Tasto premuto in questa gesture */
+    
+    /** Key pressed in this gesture */
     private MacroKey keyPress = null;
-    /** Se true indica di ignorare l'input durante il movimento delle dita per eseguire una gesture,
-     *  siccome la gesture è stata già riconoscuta e lo swipe già eseguito */
+    
+    /**
+     * If true indicates to ignore the input during the movment of the finger to execute a swipe,
+     *  because a swipe was already recognized and the swipe executed
+     */
     private boolean moveScreenDone = false;
-    /** Thread utilizzato per la pressione dei tasti */
+    
+    /** Thread uused for the keystroke */
     private Thread thKey;
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
 
-        if(setup == null) { //Se il setup non è impostato ignoro tutti gli eventi
+        if(setup == null) {
             return false;
         }
 
-        //Se più dita toccano lo schermo la pressione i keystroke si interrompono
+        // If more fingers touch the screen the keystroke is interrupted
         if(e.getPointerCount() > 1) {
             tKeyStroke = 0;
             keyStrokeMode = false;
@@ -128,16 +137,16 @@ public class MacroView extends View {
 
         switch (e.getAction())
         {
-            case MotionEvent.ACTION_DOWN: //Il primo dito che tocca lo schermo
+            case MotionEvent.ACTION_DOWN: // First finger touch the screen
                 Log.d("TOUCH", "ACTION_DOWN");
                 firstX = e.getX();
                 firstY = e.getY();
                 keyPress = setup.getActualScreen().keyAt(firstX, firstY, androidScreen);
-                if (keyPress != null) { //Se è stato premuto un tasto
+                if (keyPress != null) { // If a key was pressed
                     tKeyStroke = System.currentTimeMillis();
                     thKey = new KeyStrokeThread();
                     thKey.setPriority(Thread.MAX_PRIORITY);
-                    thKey.start(); //Avvio il thread per la pressione dei tasti
+                    thKey.start(); // Start the thread for the pressure of the keys
                     invalidate();
                 }
 
@@ -150,11 +159,12 @@ public class MacroView extends View {
                 int sx = (int) Math.signum(dx);
                 int sy = (int) Math.signum(dy);
                 float d = (float) Math.sqrt(dx * dx + dy * dy);
-
-                if(keyStrokeMode) { //Controllo se dopo il movimento il tasto è ancora premuto
+    
+                // Ceck if after the movment the key is still pressed
+                if(keyStrokeMode) {
                     keyStrokeMode = keyPress == setup.getActualScreen().keyAt(e.getX(), e.getY(), androidScreen);
                     if(!keyStrokeMode) {
-                        //Se il tasto non è ancora premuto allora lo rilascio
+                        // If the key is not released i release it
                         releaseSelectedKey();
                         keyPress = null;
                         invalidate();
@@ -168,7 +178,7 @@ public class MacroView extends View {
                         boolean up = ax < ay && sy == 1;
                         boolean down = ax < ay && sy == -1;
 
-                        if(e.getPointerCount() == 2) { //Due dita
+                        if(e.getPointerCount() == 2) { // 2 finger
                             if(left) {
                                 changeMacroScreen(MacroScreen.SwipeType.Finger2_Left);
                             } else if(right) {
@@ -178,7 +188,7 @@ public class MacroView extends View {
                             } else if(down) {
                                 changeMacroScreen(MacroScreen.SwipeType.Finger2_Down);
                             }
-                        } else if(e.getPointerCount() == 3) { //tre dita
+                        } else if(e.getPointerCount() == 3) { // 3 finger
                             if(left) {
                                 changeMacroScreen(MacroScreen.SwipeType.Finger3_Left);
                             } else if(right) {
@@ -196,14 +206,15 @@ public class MacroView extends View {
                 }
 
                 break;
-            //Due casi raggruppati:
-            case MotionEvent.ACTION_CANCEL: //Generato se il metodo "changeMacroScreen" effettua una rotazione (ACTION_UP non generata)
+            // Two case grouped:
+            case MotionEvent.ACTION_CANCEL: // Generated if the method "changeMacroScreen" executes a rotation (ACTION_UP non generata)
             case MotionEvent.ACTION_UP:
                 Log.d("TOUCH", "ACTION_UP or ACTION_CANCEL");
                 moveScreenDone = false;
                 tKeyStroke = 0;
                 keyStrokeMode = false;
-                //Dito sollevato => rilascio l'eventuale tasto
+                
+                // Finger up => release the key
                 releaseSelectedKey();
                 break;
         }
@@ -212,8 +223,8 @@ public class MacroView extends View {
     }
 
     /**
-     * Permette di rilasciare il l'eventuale tasto premuto
-     * <p>DEVE ESSERE ESEGUITO SUL MAIN THREAD</p>
+     * Release the pressed key
+     * <p>MUST BE EXECUTED ON THE MAIN THREAD</p>
      */
     private void releaseSelectedKey() {
         if (Looper.getMainLooper() != Looper.myLooper())
@@ -234,8 +245,8 @@ public class MacroView extends View {
     }
 
     /**
-     * Cambia la schermata della view
-     * @param s Nuova schermata della view
+     * Change the MacroScreen used
+     * @param s MacroScreen to select
      */
     private void changeMacroScreen(MacroScreen.SwipeType s) {
         if(setup.changeScreen(s)) {
@@ -245,7 +256,7 @@ public class MacroView extends View {
         }
     }
 
-    /** Aggiorna l'orientamento dell'activity parent in base alla {@link MacroScreen} attuale*/
+    /** Update the orientation of the activity parent thanks to the actual {@link MacroScreen} */
     private void updateOrientation() {
         int orientation;
         switch(setup.getActualScreen().getOrientation()) {
@@ -273,8 +284,8 @@ public class MacroView extends View {
     }
 
     /**
-     * Imposta la macro da utilizzare
-     * @param macroSetup - Macro setup da usare
+     * Sets the MacroSetup to use
+     * @param macroSetup MacroSetup to use
      */
     public void setMacroSetup(@NotNull MacroSetup macroSetup) {
         setup = macroSetup;
@@ -283,15 +294,15 @@ public class MacroView extends View {
     }
 
     /**
-     * Imposta il {@link MacroClient} tramite la quale inviare le pressioni dei tasti
-     * @param macroClient Istanza del client
+     * Sets the {@link MacroClient} thatg sends the keystroke to the server
+     * @param macroClient Instance of the client
      */
     public void setMacroClient(MacroClient macroClient) {
         this.macroClient = macroClient;
     }
 
     /**
-     * @return {@link MacroClient} tramite la quale inviare le pressioni dei tasti
+     * @return {@link MacroClient} that sends the keystroke to the server
      */
     public MacroClient getMacroClient() {
         return macroClient;
@@ -299,15 +310,15 @@ public class MacroView extends View {
 
 
     /**
-     * Classe per il thread che gestisce il timer per la pressione dei tasti
+     * Thread that handles the time for the key pressure
      */
     private class KeyStrokeThread extends Thread {
         @Override
         public void run() {
-            //Timer per contare la pressione come keystroke
+            // Timer to count the pression as keystroke
             while (tKeyStroke > 0) {
                 if (System.currentTimeMillis() - tKeyStroke >= TIME_KEY_STROKE) {
-                    if (tKeyStroke != 0) { //Caso entrassi nell'IF con tKeyStroke = 0
+                    if (tKeyStroke != 0) { // Case enters in the if with tKeyStroke = 0
                         tKeyStroke = 0;
                         keyStrokeMode = true;
                     }
@@ -315,9 +326,9 @@ public class MacroView extends View {
             }
 
 
-            try { //Entro nello stato keydown
-                //Siccome "keyPress" e "macroClient" possono essere settati a null in qualsiasi momento
-                //ne eseguo la copia ed eseguo i test e le operazioni sulla copia
+            try { // Enter in the state keydown
+                // Because "keyPress" and "macroClient" can be setted to null at any time
+                // i copy them
                 MacroKey k = keyPress;
                 MacroClient c = macroClient;
                 if(k != null && c != null) {
@@ -332,7 +343,7 @@ public class MacroView extends View {
 
 
 
-    /** Per il rendering della {@link MacroScreen} */
+    /** For the rendering of the {@link MacroScreen} */
     private static class Printer implements com.macrokeys.rendering.Renderer {
 
         private Canvas canvas;
@@ -342,7 +353,7 @@ public class MacroView extends View {
         }
 
         /**
-         * Resetta lo stato di this e lo predispone a una nuovo passaggio di rendering
+         * Reset the state of this and arrange it for a new draw cicle
          * @param canvas
          */
         public void reset(@NotNull Canvas canvas) {
@@ -406,15 +417,14 @@ public class MacroView extends View {
 
 
         /**
-         * Permette di disegnare la stringa nel rettangolo.
+         * Draw a string in a rectangle
          * <p>
-         * Non vengono effettuati controlli sulla dimensione del testo occupato: viene solamente
-         * renderizzato il testo
+         * Does not check the size of the rendered text
          * </p>
-         * @param c - Canvas per il rendering
-         * @param s - Stringa da renderizzare
-         * @param r - Rettangolo nel quale centrare la scritta
-         * @param p - Paint
+         * @param c Canvas for the rendering
+         * @param s Text to render
+         * @param r Rectangle where to render the tet
+         * @param p Paint
          */
         private static void drawStringRect(@NotNull Canvas c, @NotNull String s, @NotNull RectF r,
                                     @NotNull Paint p) {
@@ -428,13 +438,13 @@ public class MacroView extends View {
     }
 
 
-    /** Implementazione dello schermo per dispositivi Android */
+    /** Android implementation for a {@link Screen} */
     private static class AndroidScreen extends Screen {
 
         private final DisplayMetrics metrics;
 
         /**
-         * @param a Attività dalla quale estrarre le proprietà dello schermo
+         * @param a Activity from witch get the screen property
          */
         AndroidScreen(@NotNull Activity a) {
             metrics = new DisplayMetrics();

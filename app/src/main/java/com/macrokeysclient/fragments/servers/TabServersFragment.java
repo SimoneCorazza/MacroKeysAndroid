@@ -13,12 +13,11 @@ import com.macrokeysclient.ServiceType;
 
 
 /**
- * {@link Fragment} che rappresenta una tab generica che mostra l'elenco dei
- * server attualmente disponibili per un determinata tipologia di connessione
+ * {@link Fragment} for a generic tab that shows the list of available servers for a connection type
  */
 public abstract class TabServersFragment extends Fragment {
     
-    /** Codice del risultato della {@link MacroActivity} */
+    /** Result code of the {@link MacroActivity} */
     private static final int RESULT_CODE_MACRO_VIEW = 1;
     
     public TabServersFragment() {
@@ -30,27 +29,27 @@ public abstract class TabServersFragment extends Fragment {
     
     
     /**
-     * Consente di effettuare la ricerca dei server
-     * @param maxWaitTime Massimo tempo da aspettare
+     * Find servers
+     * @param maxWaitTime Maximum wait time for the server to respond
      */
     public abstract void findServers(int maxWaitTime);
     
     
     /**
-     * Si riconnette al precedente server al quale si è stati connessi.
+     * Reconnect to the previous server if present
      */
     protected abstract void reconnect();
     
     /**
-     * @return Servizio coperto dalla tab; non null
+     * @return Implemented service by this tab
      */
     public abstract @NonNull ServiceType getServiceType();
     
     
     /**
-     * Fa partire l'activity {@link MacroActivity}.
+     * Starts the activity {@link MacroActivity}.
      * <p>
-     *     Necessario settare la connessione su
+     *     Needed to set the connection in a
      *     {@link com.macrokeysclient.Connections}
      * </p>
      */

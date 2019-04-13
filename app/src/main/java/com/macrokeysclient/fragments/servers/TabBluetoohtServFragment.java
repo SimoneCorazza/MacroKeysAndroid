@@ -33,29 +33,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementazione di {@link TabServersFragment} per il servizio Bluetooth
+ * Implementation of the {@link TabServersFragment} for the Bluetooth service
  */
 public final class TabBluetoohtServFragment extends TabServersFragment {
     
-    /** Timeout per trovare i server */
+    /** Timeout to find the server */
     private static final int TIMEOUT_FIND = 5000;
     
-    /** {@link BroadcastReceiver} per i la ricerca di dispositivi Bluetooth */
+    /** {@link BroadcastReceiver} to find the Bluetooth devices */
     private final FindDevices brodRecFind = new FindDevices();
     
-    /** {@link BroadcastReceiver} per l'abilitazione dell'adapter Bluetooth */
+    /** {@link BroadcastReceiver} for enabling the Bluetooth adapter*/
     private final EnableAdapter brodRecEnable = new EnableAdapter();
     
-    /** Lista dei server */
+    /** Server list */
     private ServerSelectionView serversView;
     
-    /** Adapter per il bluetooth*/
+    /** Bluetooth adapter*/
     private BluetoothAdapter adapter;
     
-    /** Ultimo server al quale si è stati connessi; null se nessuno */
+    /** Last connected server to this; null if none */
     private BluetoothDevice lastServer;
     
-    /** Progesso asincrono per trovare i server */
+    /** Async process to find the servers */
     private FindServerAsync findServerAsync;
     
     
@@ -107,15 +107,15 @@ public final class TabBluetoohtServFragment extends TabServersFragment {
         txt.setText("Paired devices:");
         serversView.addHeaderView(txt);
         
-        // Eseguo qui siccome listView adesso è settata
+        // Executing here bacause listView now is setted
         findServers(TIMEOUT_FIND);
         
         return serversView;
     }
     
     /**
-     * Fa partire la connessione per il server Bluetooth indicato
-     * @param device Dispositivo server
+     * Starts the connection for the given Bluetooth server
+     * @param device Server device
      */
     private void startConnection(BluetoothDevice device) {
         if (Connections.getConnection() != null)
@@ -134,18 +134,18 @@ public final class TabBluetoohtServFragment extends TabServersFragment {
     }
     
     /**
-     * Consente di effettuare la ricerca dei server
-     * @param maxWaitTime Massimo tempo da aspettare
+     * Search the reserch of the servers
+     * @param maxWaitTime Find timeout for the server
      */
     @Override
     public void findServers(int maxWaitTime) {
-        // Caso ricerca già avviata
+        // Search already started
         if(findServerAsync != null &&
                 findServerAsync.getStatus() == AsyncTask.Status.RUNNING) {
             return;
         }
         
-        // Niente bluetooth sul device
+        // Bluetooth not supported by this device
         if(adapter == null) {
             serversView.setResultNoConnection(R.drawable.ic_bluetooth_disabled,
                     "This device does not have a bluetooth adapter",
@@ -153,7 +153,7 @@ public final class TabBluetoohtServFragment extends TabServersFragment {
                     null);
             return;
         }
-        // Bluetooth disabilitato
+        // Bluetooth disabled on this device
         if(!adapter.isEnabled()) {
             serversView.setResultNoConnection(R.drawable.ic_bluetooth_disabled,
                     "Bluetooth disabled",
@@ -185,7 +185,7 @@ public final class TabBluetoohtServFragment extends TabServersFragment {
     
     
     
-    /** Permette di trovare i Server ed eventualmente connettersi ad uno di essi */
+    /** Find the servers and connect to one of them */
     private static class FindServerAsync
             extends AsyncTask<Integer, Void, BluetoothDevice[]> {
         
@@ -221,7 +221,7 @@ public final class TabBluetoohtServFragment extends TabServersFragment {
     
     
     /**
-     * Receiver utilizzato per coprire i devices non pairati
+     * Receiver used to handle the devices not paired
      */
     private static class FindDevices extends BroadcastReceiver {
     
@@ -229,7 +229,8 @@ public final class TabBluetoohtServFragment extends TabServersFragment {
         
         public BluetoothDevice[] findServers(BluetoothAdapter adapter, int maxWaitTime) {
             devices.clear();
-            // Aggiungo i device già peirati
+            
+            // Add devices already peered
             devices.addAll(adapter.getBondedDevices());
             /*
             adapter.startDiscovery();
@@ -258,7 +259,7 @@ public final class TabBluetoohtServFragment extends TabServersFragment {
     
     
     /**
-     * Receiver usato per aggiornare l'elenco dei dispositivi bluetooth disponibili
+     * Receiver uased to update the list of available Bluetooth devices
      */
     private class EnableAdapter extends BroadcastReceiver {
         
@@ -277,12 +278,12 @@ public final class TabBluetoohtServFragment extends TabServersFragment {
     
     
     
-    /** Permette di connettersi asincronamente al Server */
+    /** Asyconous connection to a server */
     private static class ConnectAsync
             extends AsyncTask<BluetoothDevice, Void, MacroClient> {
         private IOException exception;
         
-        /** Finestrta che mostra il progresso dell'attività */
+        /** Dialog to show the connection progress */
         private ProgressDialog prog;
         private TabBluetoohtServFragment fragment;
         private BluetoothDevice server;
@@ -316,10 +317,12 @@ public final class TabBluetoohtServFragment extends TabServersFragment {
         @Override
         protected void onPostExecute(MacroClient client) {
             prog.dismiss();
-            // Se non ci sono stati errori e il client è connesso
+            
+            // No errors and the client is connected
             if(exception == null && client.isConnected()) {
                 Connections.setConnection(client);
-                // Indico l'ultimo server a cui si è connessi
+                
+                // Set the last conneted server
                 fragment.lastServer = server;
                 fragment.startMacroActivity();
             } else {

@@ -23,17 +23,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-/** Activity per la selezione della connessione */
+/** Activity for the selection of the connection */
 public class ConnectionSelectionActivity extends AppCompatActivity {
 
-    /** Tempo di attesa prima di interrompere la scoperta del Serverin millisecondi;
-     * versione più lunga */
+    /**
+     * Long timeout for the server discovery in milliseconds
+     */
     private static final int TIMEOUT_LONG_SSID = 3000;
 
-    /** Per la raccolt delle pagine dei vari  */
+    /** Set of pages for the various connection types */
     private ViewPager pager;
     
-    /** Tab associate al {@link ViewPager} {@link #pager} */
+    /** Associated tabs at the {@link ViewPager} {@link #pager} */
     private TabLayout tabs;
 
 
@@ -44,13 +45,14 @@ public class ConnectionSelectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_connection_selection);
         
         pager = (ViewPager) findViewById(R.id.viewPager);
-        //Faccio sì che nessuna pagina venga cancellata
+        
+        // No page must be deleted
         pager.setOffscreenPageLimit(ServiceType.values().length);
         pager.setAdapter(new DevicePagerAdapter(getSupportFragmentManager()));
         tabs = (TabLayout) findViewById(R.id.tabs);
         tabs.setupWithViewPager(pager);
         
-        //Rimuovo l'ombra sotto la barra dell'applicazione
+        // Remove the shadow under the app bar
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getSupportActionBar().setElevation(0);
         }
@@ -82,8 +84,8 @@ public class ConnectionSelectionActivity extends AppCompatActivity {
     }
     
     /**
-     * Aggiorna l'elenco dei server per la tab correntemente selezionata
-     * @param maxWaitTime Tempo massimo da aspettare per la risposta dei server
+     * Update the list of servers for the currently selected tab
+     * @param maxWaitTime Timeout for the server discovery
      */
     private void updateServers(int maxWaitTime) {
         DevicePagerAdapter ad = (DevicePagerAdapter) pager.getAdapter();
@@ -95,10 +97,10 @@ public class ConnectionSelectionActivity extends AppCompatActivity {
     
     
     /**
-     * {@link android.support.v4.view.PagerAdapter} per la creazione delle tabs
+     * {@link android.support.v4.view.PagerAdapter} for the creation of tabs
      */
     private static class DevicePagerAdapter extends FragmentPagerAdapter {
-        /** Memorizza le varie pagine generate, le chiavi sono le rispettive posizioni */
+        /** Store the various generated page, the keys are their indexes */
         private final Map<Integer, TabServersFragment> pagesFragmens = new ArrayMap<>();
 
         private DevicePagerAdapter(FragmentManager fm) {
@@ -146,9 +148,9 @@ public class ConnectionSelectionActivity extends AppCompatActivity {
         }
     
         /**
-         * Ottiene il fragment alla posizione indicata di questo PageAdapter
-         * @param position Posizione del fragment da ottenere
-         * @return Fragment alla posizione indicata
+         * Gests the fragment at the position given in this PageAdapter
+         * @param position Position of the fragment to get
+         * @return Fragment at the given position
          */
         public @NotNull TabServersFragment getFragmentAt(int position) {
             TabServersFragment frag = pagesFragmens.get(position);

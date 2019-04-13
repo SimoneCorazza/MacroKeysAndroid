@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.macrokeysclient.R;
 
 /**
- * {@link BaseAdapter} per la view relative al Bluetooth
+ * {@link BaseAdapter} for the view of the Bluetooth
  */
 public final class BluetoothServerAdapter extends BaseAdapter {
     

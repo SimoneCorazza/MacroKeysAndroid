@@ -34,22 +34,23 @@ import java.net.InetSocketAddress;
 
 
 /**
- * Implementazione di {@link TabServersFragment} per il servizio Wifi
+ * Implementation of {@link TabServersFragment} for the Wifi service
  */
 public final class TabNetServFragment extends TabServersFragment {
     
-    /** Tempo di attesa prima di interrompere la scoperta del Server, in millisecondi;
-     * versione più corta */
+    /**
+     * Short timeout (in milliseconds) for the SSID service
+     */
     private static final int TIMEOUT_SHORT_SSID = 1000;
     
     
-    /** Lista dei server */
+    /** Server list */
     private ServerSelectionView listView;
     
-    /** Ultimo server al quale si era connessi; null se non si è mai stati connessi ad un server */
+    /** Last server this was connected; null if none */
     private InetSocketAddress lastServer;
     
-    /** Processo asincrono per la ricerca dei server */
+    /** Asyncronous process to discover servers */
     private FindServerAsync findServerAsync;
     
     
@@ -68,10 +69,9 @@ public final class TabNetServFragment extends TabServersFragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         Log.i("TAB SERVERS", "Creating view for TCP/IP");
-        
-        
-        AdapterView.OnItemClickListener lis; //Listener per il clik di un'item
-        lis = new AdapterView.OnItemClickListener() {
+    
+        // Listener for a click of an item
+        AdapterView.OnItemClickListener lis = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent,
                                     View view, int position, long id) {
@@ -86,7 +86,7 @@ public final class TabNetServFragment extends TabServersFragment {
         listView = new ServerSelectionView(getContext());
         listView.setServerClickListener(lis);
         
-        // Eseguo qui siccome listView adesso è settata
+        // Executing here because listView now is set
         findServers(TIMEOUT_SHORT_SSID);
         
         return listView;
@@ -94,12 +94,12 @@ public final class TabNetServFragment extends TabServersFragment {
     
     
     /**
-     * Consente di effettuare la ricerca dei server
-     * @param maxWaitTime Massimo tempo da aspettare
+     * Find the servers
+     * @param maxWaitTime Timeout time for the server discovery
      */
     @Override
     public void findServers(int maxWaitTime) {
-        // Caso ricerca già avviata
+        // Case the a search already running
         if(findServerAsync != null &&
                 findServerAsync.getStatus() == AsyncTask.Status.RUNNING) {
             return;
@@ -109,7 +109,7 @@ public final class TabNetServFragment extends TabServersFragment {
         Context context = getActivity().getApplicationContext();
         final WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     
-        // Wifi non abilitato
+        // Wifi not enabled
         if(!wifi.isWifiEnabled()) {
             listView.setResultNoConnection(R.drawable.ic_signal_wifi_off,
                     "Wifi disabled",
@@ -128,7 +128,7 @@ public final class TabNetServFragment extends TabServersFragment {
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
     
-        // Non connesso a nessun accesspoint
+        // Case not connected to an access point
         if (!netInfo.isConnected()) {
             listView.setResultNoConnection(R.drawable.ic_signal_wifi_0_bar,
                     "The device is not connected to a network",
@@ -164,8 +164,8 @@ public final class TabNetServFragment extends TabServersFragment {
     
     
     /**
-     * Fa partire la connessione per il server TCP/IP indicato
-     * @param socket Socket del server alla quale connetersi
+     * Start the connection to the given server
+     * @param socket Socket of the server to connect to
      */
     private void startConnection(@NotNull InetSocketAddress socket) {
         if (Connections.getConnection() != null)
@@ -179,11 +179,11 @@ public final class TabNetServFragment extends TabServersFragment {
     
     
     
-    /** Permette di trovare i Server ed eventualmente connettersi ad uno di essi */
+    /** Find the server and connect to one of them */
     private static class FindServerAsync
             extends AsyncTask<Integer, Void, MacroNetClient.SSDPServerInfo[]> {
         
-        /** Eccezione generata per trovre il server */
+        /** Exception generated while find the servers */
         IOException ex = null;
         
         private final TabNetServFragment fragment;
@@ -202,7 +202,8 @@ public final class TabNetServFragment extends TabServersFragment {
         @Override
         protected MacroNetClient.SSDPServerInfo[] doInBackground(Integer[] params) {
             MacroNetClient.SSDPServerInfo[] servers = null;
-            //Trovo l'indirizzo dei server
+            
+            // Find the address of the servers
             try {
                 servers = MacroNetClient.findServer(params[0]);
             } catch (IOException e) {
@@ -227,12 +228,12 @@ public final class TabNetServFragment extends TabServersFragment {
     
     
     
-    /** Permette di connettersi asincronamente al Server */
+    /** Asyncronous process to connect to a server */
     private static class ConnectAsync
             extends AsyncTask<InetSocketAddress, Void, MacroClient> {
         private IOException exception;
         
-        /** Finestrta che mostra il progresso dell'attività */
+        /** Dialog to show the progress of the connetion */
         private ProgressDialog prog;
         private TabNetServFragment fragment;
         private InetSocketAddress address;
@@ -266,9 +267,10 @@ public final class TabNetServFragment extends TabServersFragment {
         @Override
         protected void onPostExecute(MacroClient client) {
             prog.dismiss();
-            // Se non ci sono stati errori e il client è connesso
+            
+            // If no errors occurred and the client is connected
             if(exception == null && client.isConnected()) {
-                // Indico l'ultimo server a cui si è connessi
+                // Set the last connected server
                 fragment.lastServer = address;
                 Connections.setConnection(client);
                 fragment.startMacroActivity();

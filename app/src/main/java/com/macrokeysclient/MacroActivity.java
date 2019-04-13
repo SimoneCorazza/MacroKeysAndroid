@@ -17,52 +17,45 @@ import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.macrokeys.MacroKey;
 import com.macrokeys.comunication.MacroClient;
 import com.macrokeysclient.AndroidMyUtil.AndroidMyUtil;
 import com.macrokeys.MacroSetup;
-import com.macrokeys.MSLoadException;
 import com.macrokeysclient.views.MacroView;
-import com.macrokeysclient.views.OnMacroKeyStroke;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
 /**
- * Attività per le macro
+ * Activity for the macro
  */
 public class MacroActivity extends AppCompatActivity {
 
-    /** MacroSetup attualmente in uso, inviata dal Server; null se il caricamento va male */
+    /** MacroSetup actually used; null if the loading does not go well */
     private MacroSetup originalSetup;
 
-    /** MacroSetup in uso adattata alle dimensioni del devce */
+    /** MacroSetup used in the size of this device */
     private MacroSetup correctSizedSetup;
 
-    /** Utilizzata mentre si aspetta la MacroSetup dal server */
+    /** Dialog to show when the server has not sent the MacroSetup yet */
     private ProgressDialog progressDialog;
 
-    /** Thread che ascolta l'arrivo delle macro setup inviate dal server */
+    /** Thread that listen the incomming MacroSetup sent by the server */
     private Thread thMacroSetupListener;
 
-    /** View usata per renderizzare le varie schermate */
+    /** View used to render the screens */
     private MacroView macroView;
     
     /**
-     * Permette di non mandere in standby l'applicazione, evitndo così che i
-     * thrad necessari per mantenere attiva la connessione con il server
-     * vengano fermati
+     * Uset to not stanby the app, avoiding that threads to keep alive the connection
+     * with the server are stopped
      */
     private PowerManager.WakeLock wakeLock;
     
-    /** Metriche dello schermo */
+    /** Screen metrics */
     private Display display;
     private DisplayMetrics metrics;
 
 
-    /** Argomento passato all'{@link Intent} che rappresenta il risultato
-     * di questa Activity */
+    /** Argument passed at the {@link Intent} that rapresent the result of this Activity */
     public static final String ARG_RESULT = "ARG_RES";
 
     @Override
@@ -70,7 +63,7 @@ public class MacroActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_macro);
 
-        //Controllo il settaggio della connessione
+        // Check the presence of the connection
         if(Connections.getConnection() == null) {
             throw new RuntimeException("Connection not set use: Connections.setConnection()");
         }
@@ -79,15 +72,15 @@ public class MacroActivity extends AppCompatActivity {
         assert macroView != null;
         macroView.setMacroClient(Connections.getConnection());
 
-        //Fullscreen:
+        // Fullscreen
         if(Build.VERSION.SDK_INT >= 16) {
             hideSystemUI();
         }
     
-        //Per tenere acceso lo schermo sempre
+        // To keep the screen always on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     
-        //Per impedire di mandare in standby l'app e i thread che comunicano con il server
+        // To avoid the app standby
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         assert powerManager != null;
         wakeLock = powerManager.newWakeLock(
@@ -96,7 +89,7 @@ public class MacroActivity extends AppCompatActivity {
         wakeLock.acquire();
         
         
-        //Metriche dello schermo
+        // Screen metric
         display = getWindowManager().getDefaultDisplay();
         metrics = new DisplayMetrics();
         display.getMetrics(metrics);
@@ -108,7 +101,7 @@ public class MacroActivity extends AppCompatActivity {
         progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                // Connessione interrotta dall'utente
+                // Connection stopped by the user
                 setResult(true);
                 finish();
             }
@@ -120,7 +113,7 @@ public class MacroActivity extends AppCompatActivity {
     }
 
     /**
-     * Nesconde l'UI di sistema
+     * Hide the system UI
      */
     private void hideSystemUI() {
         if (Build.VERSION.SDK_INT < 19) {
@@ -158,10 +151,11 @@ public class MacroActivity extends AppCompatActivity {
         try {
             c.close();
         } catch (IOException ignored) { }
-        //Resetto la connessione
+        
+        // Reset the connection
         Connections.setConnection(null);
     
-        //Rilascio il lock
+        // Release the lock
         wakeLock.release();
     }
 
@@ -170,26 +164,27 @@ public class MacroActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        //Aggiorno la setup
+        
+        // Update the setup
         updateSetup();
     }
     
     /**
-     * Imposta il risultato inerente a questa activity
-     * @param res True: disconnessione causata dall'utente; False altrimenti
+     * Set the result of this Activity
+     * @param res True: disconnection caused by the user, false otherwise
      */
     private void setResult(boolean res) {
-        // Connessione interrotta dall'utente
         Intent returnIntent = new Intent();
         returnIntent.putExtra(ARG_RESULT, res);
         setResult(Activity.RESULT_OK, returnIntent);
     }
     
     /**
-     * Permette di ricalcolare la dimensione corretta della {@link MacroSetup} per il device
-     * corrente, aggiornado così il campo {@code correctSizedSetup}; in oltre aggiorna la view
-     * dedicata a mostrare la {@link MacroSetup}, Quest'utima operazione è thread-safe.
-     * <p>{@link #originalSetup} non deve essere {@code null}</p>
+     * Recalculate the correct size of the {@link MacroSetup} for this device
+     * updating the field {@link #correctSizedSetup}; Moreover updates the view
+     * dedicated at showing the {@link MacroSetup}.
+     * The last operation is thread-safe.
+     * <p>{@link #originalSetup} must not be {@code null}</p>
      */
     private void updateSetup() {
         assert originalSetup != null;
@@ -212,7 +207,7 @@ public class MacroActivity extends AppCompatActivity {
     }
 
     /**
-     * Eseguibile per la ricezione delle MacroSetup
+     * Runnable for receiving the MacroSetup
      */
     private class MacroSetupListener implements Runnable {
         @Override
@@ -221,7 +216,7 @@ public class MacroActivity extends AppCompatActivity {
                 try {
                     originalSetup = Connections.getConnection().reciveMacroSetup();
                 } catch (Throwable e) {
-                    //Forzo la generazione dell'eccezione per generare un'eccezzione non gestita
+                    // Fore a generation of an unhandled exception
                     throw new RuntimeException(e);
                 }
 
@@ -231,15 +226,15 @@ public class MacroActivity extends AppCompatActivity {
     }
 
     /**
-     * Handler per le eccezzioni generate dal thread che ascolta pa ricezione di {@link MacroSetup}
+     * Handler for the exception generated by the thread that receive the {@link MacroSetup}
      */
     private class UncaughException implements Thread.UncaughtExceptionHandler {
         @Override
         public void uncaughtException(java.lang.Thread thread, Throwable ex) {
 
-            //Caso l'eccezione sia generata a causa della chiusura dell'activity
+            // If exception generated by the closing Activity
             if(MacroActivity.this.isFinishing()) {
-                // Connessione interrotta dall'utente
+                // Connection iterrupted by the user
                 setResult(true);
                 return;
             }
@@ -248,7 +243,7 @@ public class MacroActivity extends AppCompatActivity {
             MacroActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    // Connessione interrotta dal server
+                    // Connection iterrupted by the server
                     setResult(false);
                     finish();
                 }
