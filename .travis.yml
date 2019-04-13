@@ -10,5 +10,3 @@ android:
  - platform-tools
  - build-tools-27.0.3
  - android-27
-
-install: gradle wrapper --gradle-version 4.10
