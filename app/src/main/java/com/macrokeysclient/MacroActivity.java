@@ -84,7 +84,7 @@ public class MacroActivity extends AppCompatActivity {
         assert powerManager != null;
         wakeLock = powerManager.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK,
-                "MyWakelockTag");
+                "macrokeys:macroactivity");
         wakeLock.acquire();
         
         
