@@ -16,3 +16,11 @@ licenses:
  - android-sdk-preview-license-.+
  - android-sdk-license-.+
  - google-gdk-license-.+
+
+addons:
+  sonarcloud:
+    organization: "simonecorazza-github"
+    token: $SONAR_TOKEN
+
+script:
+  - ./gradlew sonarqube
