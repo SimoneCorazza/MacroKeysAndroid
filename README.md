@@ -32,3 +32,9 @@ Android MacroKeys client.
 ## Getting Started
 
 Use [Android Studio](https://developer.android.com/studio) to build the project
+
+## License
+
+This project is licensed under the GPL License see the [LICENSE.md](LICENSE.md) file for details.
+
+The icon is licensed under the CC BY-NC-ND
