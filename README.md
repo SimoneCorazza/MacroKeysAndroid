@@ -4,7 +4,7 @@
     <img src="pic/macrokeys-logo.svg" alt="MacroKeys Logo" width="200" height="100">
 </div>
 
-# MacroKeys Server &middot; [![Build Status](https://travis-ci.org/SimoneCorazza/MacroKeysAndroid.svg?branch=master)](https://travis-ci.org/SimoneCorazza/MacroKeysAndroid) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=MacroKeysAndroid&metric=alert_status)](https://sonarcloud.io/dashboard?id=MacroKeysAndroid)
+# MacroKeys Android Client &middot; [![Build Status](https://travis-ci.org/SimoneCorazza/MacroKeysAndroid.svg?branch=master)](https://travis-ci.org/SimoneCorazza/MacroKeysAndroid) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=MacroKeysAndroid&metric=alert_status)](https://sonarcloud.io/dashboard?id=MacroKeysAndroid)
 
 Android MacroKeys client.
 
